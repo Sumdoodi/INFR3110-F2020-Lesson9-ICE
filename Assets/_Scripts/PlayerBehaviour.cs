@@ -6,9 +6,14 @@ using UnityEngine.InputSystem;
 public class PlayerBehaviour : MonoBehaviour
 {
     public bool isGrounded;
+    public int horizontalForce;
+    public int verticalForce;
+
     private Rigidbody2D m_rigidBody2D;
     private SpriteRenderer m_spriteRenderer;
     private Animator m_animator;
+    private Vector2 direction;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -21,17 +26,47 @@ public class PlayerBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (isGrounded)
+        {
+            m_rigidBody2D.AddForce(direction * horizontalForce * Time.deltaTime);
+
+            if (Mathf.Abs(m_rigidBody2D.velocity.x) >= 0.1f)
+            {
+                m_animator.SetInteger("AnimState", 1);
+            }
+
+            m_rigidBody2D.velocity *= 0.99f;
+        }
+
+        if (Mathf.Abs(m_rigidBody2D.velocity.x) < 0.1f)
+        {
+            m_animator.SetInteger("AnimState", 0);
+        }
     }
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        Debug.Log("Move Activated");
+        direction = context.ReadValue<Vector2>();
+
+        switch (context.control.name)
+        {
+            case "a":
+            case "leftArrow":
+                m_spriteRenderer.flipX = true;
+                break;
+            case "d":
+            case "rightArrow":
+                m_spriteRenderer.flipX = false;
+                break;
+        }
     }
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        Debug.Log("Jump Activated");
+        if (isGrounded)
+        {
+            m_rigidBody2D.AddForce(Vector2.up * verticalForce);
+        }
     }
 
     public void OnCollisionEnter2D(Collision2D other)

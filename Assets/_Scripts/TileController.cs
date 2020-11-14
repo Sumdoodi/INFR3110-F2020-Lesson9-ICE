@@ -35,6 +35,14 @@ public class TileController : MonoBehaviour
     public TileTypes[,] Tiles;
     public Tile[,] TileArray;
 
+    public GameObject player;
+    public Transform spawnPoint;
+
+    void Awake()
+    {
+        Instantiate(player, spawnPoint.position, Quaternion.identity);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,10 +52,10 @@ public class TileController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Generate();
-        }
+        //if (Input.GetKeyDown(KeyCode.R))
+        //{
+        //    Generate();
+        //}
     }
 
     public void InitTiles()
@@ -68,6 +76,7 @@ public class TileController : MonoBehaviour
 
     public void Generate()
     {
+        player.transform.position = transform.position;
         Tiles = new TileTypes[width, height];
         TileArray = new Tile[width, height];
         InitTiles();
